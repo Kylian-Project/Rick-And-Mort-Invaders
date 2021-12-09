@@ -96,6 +96,9 @@ class ennemi():
     def disparaitre(self):
         self.imagerect.x = random.randint(250,810)
         self.imagerect.y = random.randint(-2000,-100)
+    def replay(self):
+        self.imagerect.x = 10000
+        self.imagerect.y = -100000000
 
 #--------------------- CLASS ------------------#
 
@@ -213,7 +216,8 @@ clip = VideoFileClip('img/intro.mpg')
 listeennemis = []
 
 def reload():
-    global player
+    global player, listeennemis
+    listeennemis = []
     # creation du joueur
     player = Joueur()
     player.vitesse = 4
@@ -434,6 +438,7 @@ def jouer():
     pygame.mixer.music.play(-1, 0.0, 0)
     global nbcurseur, vitessetir, score1
     reload()
+    actumechant()
     vitessetir = 80
     pygame.mouse.set_visible(False)  # cacher la souris de base pour mettre la nouvelle (personnalisé)
     running = True # variable pour laisser la fenêtre ouverte
@@ -563,7 +568,7 @@ def jouer():
             fenetre.blit(colid_invader1,colid_invader1_rect)
             fenetre.blit(ennemi.image,ennemi.imagerect) # appel de la fonction qui dessine l'ennemi
             colid_invader1_rect.x, colid_invader1_rect.y = ennemi.imagerect.x, ennemi.imagerect.y
-            if colid_invader1_rect.colliderect(colide_pisto_rect) or ennemi.imagerect.y > 600:
+            if colid_invader1_rect.colliderect(colide_pisto_rect) or ennemi.imagerect.y > 600 and ennemi.imagerect.x < 5000:
                 ennemi.disparaitre()
                 expl_sound.play()
                 player.hp()
@@ -582,6 +587,8 @@ def jouer():
                         for item in sauvegarde:
                             f.write(f'{item}\n') #écrit le nouveau score
             score1 = player.score
+            for ennemi in listeennemis:
+                ennemi.replay()
             running = False
             end_menu()
 
